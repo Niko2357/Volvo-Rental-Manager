@@ -46,6 +46,10 @@ Edit configuration file and try to run application RentalManager
     "dsn": "localhost:1521/XE"
     }
   ```
+
+> [!Important]
+> **Make sure you have all Privileges needed (creating tables and views, etc.).**
+
 ## Application architecture
 This application follows DAO (Data access object) design pattern. Presenting layer is build with tkinter library and is build in MainMenu class. Logic layer defines objects such as Machine, Customer, RentalItem and Rental. Data Access layer are classes MachineDAO, CustomerDAO and RentalDAO. They communicate with database.
 ### Database Model
