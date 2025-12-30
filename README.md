@@ -58,6 +58,17 @@ There are three test cases.
 * Scenario 2: Submitting empty forms triggers a warning dialog.
 * Scenario 3: Launches without connection to database results in handled error message instead of crash.
 
+## Checklist
+- [x] 1. Relation Database
+- [x] 2. 5 tables, M:N relation and 2 views
+- [x] 3. Attributes like float, bool, enum, string, varchar, date
+- [x] 4. Operations with multiple tables (select, update)
+- [x] 5. Transaction upon multiple tables
+- [x] 6. Report with information deducated from data
+- [x] 7. Import from csv, xml or json into two or more tables
+- [x] 8. Configuration file
+- [x] 9. Input validation and error handling
+
 ## More Info
 This software is for educational purposes. The Volvo machine model names are the property of the Volvo Group.
 
