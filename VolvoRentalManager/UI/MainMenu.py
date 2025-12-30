@@ -39,7 +39,7 @@ class MainMenu:
         style.map("Treeview", background=[("selected", "#4b6eaf")])
         style.configure("Treeview.Heading", background="#1e1e1e", foreground="white", relief="flat")
         style.map("Treeview.Heading", background=[('active', '#333333')])
-        self.tree = ttk.Treeview(master, columns=("ID", "Model", "Weight", "Available", "Category"), show="headings")
+        self.tree = ttk.Treeview(master)
         self.setup_treeview()
         self.tree.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
         self.btn_refresh = tk.Button(self.master, text="Refresh list of Machines", command=self.load_machines,
@@ -79,12 +79,20 @@ class MainMenu:
         rental_menu = tk.Menu(menubar, **menu_style)
         menubar.add_cascade(label="Rentals", menu=rental_menu)
         rental_menu.add_command(label="New Lease", command=self.open_rental_window)
+        rental_menu.add_command(label="Return Machine", command=self.open_return_window)
 
         # Menu Edits
         edit_menu = tk.Menu(menubar, **menu_style)
         menubar.add_cascade(label="Add", menu=edit_menu)
         edit_menu.add_command(label="Add Machine", command=self.add_machine)
         edit_menu.add_command(label="Add Customer", command=self.add_customer)
+
+        # Menu Reports
+        report_menu = tk.Menu(menubar, **menu_style)
+        menubar.add_cascade(label="Reports", menu=report_menu)
+        report_menu.add_command(label="Customer Revenue", command=self.view_revenue)
+        report_menu.add_command(label="Machines Usage", command=self.view_machine_usage)
+
 
     def setup_treeview(self):
         """
@@ -347,4 +355,87 @@ class MainMenu:
                 tk.messagebox.showerror("Error", "Customer couldn't be created.")
 
         tk.Button(top, text="Create Customer", command=save, bg="#FFD700", font=("Arial", 11, "bold"), pady=10).pack(pady=30)
+
+    def view_revenue(self):
+        """
+        Edits header of treeview table and loads financial data from the view.
+        :return:
+        """
+        self.tree.heading("c1", text="Company Name")
+        self.tree.heading("c2", text="Total Rentals")
+        self.tree.heading("c3", text="Total Revenue")
+        self.tree.heading("c4", text="")
+        self.tree.heading("c5", text="")
+
+        for i in self.tree.get_children():
+            self.tree.delete(i)
+        dao = RentalDAO()
+        report_data = dao.get_customer_revenue()
+
+        for row in report_data:
+            self.tree.insert("", tk.END, values=(row[0], row[1], f"{row[2]} CZK", "", ""))
+        self.btn_refresh.config(text="Refresh Report", command=self.view_revenue)
+
+    def view_machine_usage(self):
+        """
+        Edits header of treeview table and loads aggregated financial data from the view.
+        :return:
+        """
+        self.tree.heading("c1", text="Machine Model")
+        self.tree.heading("c2", text="Category")
+        self.tree.heading("c3", text="Times Rented")
+        self.tree.heading("c4", text="Total Revenue")
+        self.tree.heading("c5", text="")
+
+        for i in self.tree.get_children():
+            self.tree.delete(i)
+        dao = MachineDAO()
+        usage_data = dao.get_machine_usage()
+        for row in usage_data:
+            self.tree.insert("", tk.END, values=(row[0], row[1], row[2], f"{row[3]} CZK", ""))
+        self.btn_refresh.config(text="Refresh Usage Stats", command=self.view_machine_usage)
+
+    def open_return_window(self):
+        """
+        Builds a popup window with a form returning the machine.
+        Updates machine's availability.
+        :return: window
+        """
+        top = tk.Toplevel(self.master)
+        top.title("Return Rented Machine")
+        top.geometry("800x700")
+        top.configure(bg="#2b2b2b")
+
+        tk.Label(top, text="Select machine to return:", bg="#2b2b2b", fg="#f0f0f0",
+                 font=("Arial", 12, "bold")).pack(pady=20)
+
+        dao = MachineDAO()
+        rented_machines = dao.get_rented_machines()
+
+        machine_list = [f"{m.id}: {m.model}" for m in rented_machines]
+        combo_machine = ttk.Combobox(top, values=machine_list, state="readonly", font=("Arial", 11))
+        combo_machine.pack(pady=10, padx=50, fill=tk.X)
+
+        def do_return():
+            """
+            Updates the machine availability back to 1.
+            """
+            selection = combo_machine.get()
+            if not selection:
+                tk.messagebox.showwarning("Warning", "Please select a machine.")
+                return
+            parts = selection.split(": ", 1)
+            machine_id = int(parts[0])
+            machine_model = parts[1]
+            success = dao.return_machine(machine_id)
+
+            if success:
+                tk.messagebox.showinfo("Success", f"Machine {machine_model} is now available.")
+                top.destroy()
+                self.load_machines()
+            else:
+                tk.messagebox.showerror("Error", "Could not update machine status.")
+
+        tk.Button(top, text="Confirm Return", command=do_return, bg="#FFD700",
+                  font=("Arial", 11, "bold"), pady=10).pack(pady=30)
 

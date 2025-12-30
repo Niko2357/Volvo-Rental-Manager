@@ -11,8 +11,6 @@ def setup():
     :return: Connection or None when exception occurs.
     """
     connection = get_connection()
-    if not connection:
-        return
 
     cursor = connection.cursor()
     tables_to_drop = ["Rental_Items", "Rentals", "Machines", "Customers", "Categories"]
@@ -60,14 +58,7 @@ def setup():
             foreign key (rental_id) references Rentals(id), 
             foreign key (machine_id) references Machines(id),
             primary key (rental_id, machine_id)
-        )""",
-        """create or replace view Available_machines as select m.id, m.model, m.weight, c.name, 
-        as category_name, c.power from Machines m join Categories c on m.id_category = c.id where m.is_available = 1 
-        """,
-        """create or replace view Customer_revenue as select cust.company_name, count(r.id) as total_rentals, 
-        sum(ri.price_per_day * ri.days_count) as total_spent from Customers cust 
-        left join Rentals r on cust.id = r.customer_id left join Rental_Items ri on r.id = ri_rental_id
-        group by cust.company_name"""
+        )"""
     ]
 
     try:
@@ -80,7 +71,39 @@ def setup():
                     "insert into Customers(company_name, name, surname, email) values(:1, :2, :3, :4)")
         import_data(cursor, "machines.csv",
                     "insert into Machines(model, weight, is_available, id_category) values(:1, :2, :3, :4)")
+        import_data(cursor, "rentals.csv",
+                    "insert into Rentals(customer_id, note) values(:1, :2)")
+        import_data(cursor, "rental_items.csv",
+                    "insert into Rental_Items(rental_id, machine_id, price_per_day, days_count) values(:1, :2, :3, :4)")
         connection.commit()
+        views = [
+            """create or replace view Available_machines as 
+               select m.id, m.model, m.weight, c.name as category_name, c.power 
+               from Machines m 
+               join Categories c on m.id_category = c.id 
+               where m.is_available = 1""",
+            """create or replace view Customer_revenue as 
+               select cust.company_name, count(r.id) as total_rentals, 
+               sum(ri.price_per_day * ri.days_count) as total_spent 
+               from Customers cust 
+               left join Rentals r on cust.id = r.customer_id 
+               left join Rental_Items ri on r.id = ri.rental_id
+               group by cust.company_name""",
+            """create or replace view Machine_usage as 
+               select m.model, cat.name as category, 
+               count(ri.rental_id) as times_rented, 
+               sum(ri.days_count) as total_days_in_field,
+               max(ri.price_per_day) as highest_daily_rate,
+               sum(ri.price_per_day * ri.days_count) as total_revenue_generated 
+               from Machines m
+               join Categories cat on m.id_category = cat.id 
+               left join Rental_Items ri on m.id = ri.machine_id 
+               group by m.model, cat.name"""
+        ]
+        for view in views:
+            cursor.execute(view)
+        connection.commit()
+        print("Views created")
     except Exception as e:
         print(f"Tables couldn't be created. -  {e}")
         connection.rollback()
@@ -109,6 +132,12 @@ def import_data(cursor, file, query):
                 if file == "machines.csv":
                     clear_float = (row[0], float(row[1]), int(row[2]), int(row[3]))
                     data.append(clear_float)
+                elif file == "rental_items.csv":
+                    clear_data = (int(row[0]), int(row[1]), float(row[2]), int(row[3]))
+                    data.append(clear_data)
+                elif file == "rentals.csv":
+                    clear_data = (int(row[0]), row[1])
+                    data.append(clear_data)
                 else:
                     data.append(row)
             cursor.executemany(query, data)
@@ -119,4 +148,5 @@ def import_data(cursor, file, query):
         print(f"Something went wrong with importing data: {e}")
 
 
-
+if __name__ == "__main__":
+    setup()

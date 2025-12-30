@@ -57,3 +57,22 @@ class RentalDAO:
         finally:
             cursor.close()
             connection.close()
+
+    def get_customer_revenue(self):
+        """
+        Fetches data from view Customer_revenue.
+        :return: list
+        """
+        connection = get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("SELECT company_name, total_rentals, total_spent FROM Customer_revenue")
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error fetching report: {e}")
+            return []
+        finally:
+            cursor.close()
+            connection.close()
+
+

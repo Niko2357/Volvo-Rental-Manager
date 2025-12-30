@@ -112,3 +112,53 @@ class MachineDAO:
             cursor.close()
             connection.close()
 
+    def get_machine_usage(self):
+        """
+        Fetches data from view Machine_usage.
+        :return: list
+        """
+        connection = get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("select model, category, times_rented, total_revenue_generated from Machine_usage")
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error fetching machine usage: {e}")
+            return []
+        finally:
+            cursor.close()
+            connection.close()
+
+    def get_rented_machines(self):
+        """
+        Gets all rented machines.
+        :return: list
+        """
+        connection = get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("select id, model from Machines where is_available = 0")
+            return [type('Machine', (object,), {'id': row[0], 'model': row[1]}) for row in cursor.fetchall()]
+        finally:
+            cursor.close()
+            connection.close()
+
+    def return_machine(self, machine_id):
+        """
+        Updates machine's availability to available.
+        :param machine_id: number id of machine
+        :return:
+        """
+        connection = get_connection()
+        cursor = connection.cursor()
+        try:
+            cursor.execute("update Machines set is_available = 1 where id = :1", [machine_id])
+            connection.commit()
+            return True
+        except Exception as e:
+            print(f"Update failed: {e}")
+            connection.rollback()
+            return False
+        finally:
+            cursor.close()
+            connection.close()
