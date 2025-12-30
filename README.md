@@ -1,5 +1,5 @@
 # Volvo-Rental-Manager
-This software simulates management of renting construction machines using database and GUI. It records individual customers and machines.
+This software simulates management of renting construction machines using database and GUI. It records individual customers and machines. Meets the requirement of D1, DAO design pattern usage.
 ## Requirements and libraries
 Build in PyCharm.
 * System
