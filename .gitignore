@@ -1,0 +1,15 @@
+# PyCharm nastavení
+.idea/
+
+# Python kompilace
+__pycache__/
+*.py[cod]
+
+# Virtuální prostředí
+venv/
+env/
+
+# PyInstaller 
+build/
+dist/
+*.spec
