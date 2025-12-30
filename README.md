@@ -7,18 +7,20 @@ Build in PyCharm.
   * Database: access to Oracle database 19c or 21c XE
 * Libraries
   * oracledb - newer version of cx_Oracle
+ 
     ```python
       pip install oracledb 
     ```
   * tkinter - GUI components
   * shutil - manipulation with files
   * pyinstaller - executable application builder
+ 
     ```python
       pip install pyinstaller
     ```
 ## Running the application
 ### Database setup
-Open Oracle SQL Developer and make a new connection. 
+Open Oracle SQL Developer and make a new connection. Rewrite connection information to configuration file that is located in /dist directory or the one in the project. Depends on which of three ways to run the application you choose. If it's first then edit the config.json in /dist directory. If it's second or third way edit config.json in the project VolvoRentalManager (same level as main.py).
 
 > [!Important]
 > **All needed SQL operations are in code. But path to data being imported needs to stay how you found them (/Data).**
@@ -58,5 +60,6 @@ There are three test cases.
 
 ## More Info
 This software is for educational purposes. The Volvo machine model names are the property of the Volvo Group.
-Author: Nikola Poláchová
-Contact: polachova@spsejecna.cz
+
+* Author: Nikola Poláchová
+* Contact: polachova@spsejecna.cz
