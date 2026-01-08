@@ -78,3 +78,4 @@ This software is for educational purposes. The Volvo machine model names are the
 
 * Author: Nikola Poláchová
 * Contact: polachova@spsejecna.cz
+* Discord: Niki Lauda @niko_2357
