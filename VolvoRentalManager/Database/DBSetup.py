@@ -120,8 +120,8 @@ def import_data(cursor, file, query):
     :param query: insertion that will happen
     :return: list of rows
     """
-    cur_dir = os.path.dirname(__file__)
-    data_path = os.path.abspath(os.path.join(cur_dir, "../..", "Data"))
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(cur_dir, "Data")
     full_path = os.path.join(data_path, file)
     try:
         with open(full_path, "r", encoding="utf-8") as fil:

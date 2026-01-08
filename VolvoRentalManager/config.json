@@ -1,5 +1,5 @@
 {
-  "user": "YOUR_USERNAME",
-  "password": "YOUR_PASSWORD",
+  "user": "system",
+  "password": "barnie",
   "dsn": "localhost:1521/XEPDB1"
 }

@@ -23,15 +23,21 @@ pyinstaller_args = [
 PyInstaller.__main__.run(pyinstaller_args)
 
 
-def copy_file_to_dist(filename):
-    source = filename
-    destination = os.path.join('dist', filename)
-    if os.path.exists(source):
-        shutil.copyfile(source, destination)
-        print("Copied.")
+def copy_to_dist(path, is_folder=False):
+    destination = os.path.join('dist', path)
+    if os.path.exists(path):
+        if is_folder:
+            if os.path.exists(destination):
+                shutil.rmtree(destination)
+            shutil.copytree(path, destination)
+            print(f"Folder {path} copied to dist.")
+        else:
+            shutil.copyfile(path, destination)
+            print(f"File {path} copied to dist.")
     else:
-        print("File not found.")
+        print(f"Source {path} not found!")
 
 
-copy_file_to_dist('config.json')
-copy_file_to_dist('machine_logo.ico')
+copy_to_dist('config.json')
+copy_to_dist('machine_logo.ico')
+copy_to_dist('Database/Data', is_folder=True)
