@@ -32,7 +32,7 @@ There are three ways to run this application.
 > **Change configuration file. Without right username and password nothing will work.**
 
 1. Run the build
-   Build is in /dist directory. Find Volvo Manager.exe and start it. Don't forget to change configuration file with your information.
+   Build is published in releases. Download the Volvo.Manager.zip and find Volvo Manager.exe and start it. Don't forget to change configuration file with your information.
 2. Build the app
    Open project VolvoRentalManager and find BuildExe.py. This python file builds and runs the application.
 3. Console version
