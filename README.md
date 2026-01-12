@@ -23,6 +23,10 @@ Build in PyCharm.
 Open Oracle SQL Developer and make a new connection. Rewrite connection information to configuration file that is located in /dist directory or the one in the project. Depends on which of three ways to run the application you choose. If it's first then edit the config.json in /dist directory. If it's second or third way edit config.json in the project VolvoRentalManager (same level as main.py).
 
 Run this code in Oracle database and write the information in config.
+
+> [!Caution]
+> **You need to connect to the database under the user you're putting into config.**
+
 ```sql
   create user volvo_user identified by heslo123;
   grant connect, resource, create view to volvo_user;
