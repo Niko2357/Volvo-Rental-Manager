@@ -11,6 +11,9 @@ Build in PyCharm.
     ```python
       pip install oracledb 
     ```
+  > [!Caution]
+  > **This libratry isn't on school pc. You have to install it or even  build won't work.**
+
   * tkinter - GUI components
   * shutil - manipulation with files
   * pyinstaller - executable application builder
